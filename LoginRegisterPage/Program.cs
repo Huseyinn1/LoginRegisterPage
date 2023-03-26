@@ -1,8 +1,15 @@
+using LoginRegisterPage.Entities;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
+builder.Services.AddDbContext<DataBaseContext>(opts => {
+    opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        
+}
+);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -22,6 +22,15 @@ namespace LoginRegisterPage.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+            return View();
+        }
         public IActionResult Profile()
         {
             return View();
