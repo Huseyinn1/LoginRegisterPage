@@ -1,4 +1,5 @@
 using LoginRegisterPage.Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,17 @@ builder.Services.AddDbContext<DataBaseContext>(opts => {
         
 }
 );
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(opts =>
+    {
+        opts.Cookie.Name = "WepApp.auth";
+        opts.ExpireTimeSpan = TimeSpan.FromDays(7);
+        opts.SlidingExpiration = false;
+        opts.LoginPath = "/Account/Login";
+        opts.LogoutPath = "/Account/Logout";
+        opts.AccessDeniedPath = "/Home/AccesDenied";
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,7 +32,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
