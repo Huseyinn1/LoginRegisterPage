@@ -2,13 +2,14 @@
 using LoginRegisterPage.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NETCore.Encrypt.Extensions;
 using System.Security.Claims;
 
 namespace LoginRegisterPage.Controllers
 {
-
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly DataBaseContext _databaseContext;
@@ -19,10 +20,12 @@ namespace LoginRegisterPage.Controllers
             _configuration = configuration;
         }
 
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
@@ -65,10 +68,12 @@ namespace LoginRegisterPage.Controllers
 
             return View(model);
         }
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
@@ -111,7 +116,7 @@ namespace LoginRegisterPage.Controllers
         {
             return View();
         }
-        public IActionResult logout()
+        public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction(nameof(Login));
