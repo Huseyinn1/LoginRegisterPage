@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoginRegisterPage.Controllers
 {
-    [Authorize]
+    [Authorize(Roles="admin")]
     public class AdminController : Controller
     {
         

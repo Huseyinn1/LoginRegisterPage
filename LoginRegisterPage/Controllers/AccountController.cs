@@ -49,6 +49,7 @@ namespace LoginRegisterPage.Controllers
                     List<Claim> claims = new List<Claim>();
                     claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
                     claims.Add(new Claim(ClaimTypes.Name,user.NameSurname ?? String.Empty));
+                    claims.Add(new Claim(ClaimTypes.Role,user.Role));
                     claims.Add(new Claim("Username",user.UserName));
 
                     ClaimsIdentity identity = new ClaimsIdentity(claims,
