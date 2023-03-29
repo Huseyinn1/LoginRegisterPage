@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NETCore.Encrypt.Extensions;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace LoginRegisterPage.Controllers
@@ -31,13 +32,11 @@ namespace LoginRegisterPage.Controllers
         {
             if (ModelState.IsValid)
             {
-                string md5Salt = _configuration.GetValue<string>("AppSettings:MD5Salt");
-                string saltedPassword = model.Password + md5Salt;
-                string hashedPassword = saltedPassword.MD5();
+                string hashedPassword = DoMd5HashedString(model.Password);
 
-                User user = _databaseContext.Users.SingleOrDefault(x=>x.UserName.ToLower()==model.UserName.ToLower()
-                && x.Password == hashedPassword );
-                
+                User user = _databaseContext.Users.SingleOrDefault(x => x.UserName.ToLower() == model.UserName.ToLower()
+                && x.Password == hashedPassword);
+
                 if (user != null)
                 {
                     if (user.Locked)
@@ -48,15 +47,15 @@ namespace LoginRegisterPage.Controllers
 
                     List<Claim> claims = new List<Claim>();
                     claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-                    claims.Add(new Claim(ClaimTypes.Name,user.NameSurname ?? String.Empty));
-                    claims.Add(new Claim(ClaimTypes.Role,user.Role));
-                    claims.Add(new Claim("Username",user.UserName));
+                    claims.Add(new Claim(ClaimTypes.Name, user.NameSurname ?? String.Empty));
+                    claims.Add(new Claim(ClaimTypes.Role, user.Role));
+                    claims.Add(new Claim("Username", user.UserName));
 
                     ClaimsIdentity identity = new ClaimsIdentity(claims,
                         CookieAuthenticationDefaults.AuthenticationScheme);
 
                     ClaimsPrincipal principal = new ClaimsPrincipal(identity);
-                    
+
                     HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
                     return RedirectToAction("index", "home");
 
@@ -69,6 +68,15 @@ namespace LoginRegisterPage.Controllers
 
             return View(model);
         }
+
+        private string DoMd5HashedString(string s)
+        {
+            string md5Salt = _configuration.GetValue<string>("AppSettings:MD5Salt");
+            string salted = s + md5Salt;
+            string hashed = salted.MD5();
+            return hashed;
+        }
+
         [AllowAnonymous]
         public IActionResult Register()
         {
@@ -87,10 +95,7 @@ namespace LoginRegisterPage.Controllers
                 }
 
 
-                string md5Salt = _configuration.GetValue<string>("AppSettings:MD5Salt");
-                string saltedPassword = model.Password + md5Salt;
-                string hashedPassword = saltedPassword.MD5();
-
+                string hashedPassword = DoMd5HashedString(model.Password);
 
                 User user = new()
                 {
@@ -115,7 +120,56 @@ namespace LoginRegisterPage.Controllers
         }
         public IActionResult Profile()
         {
+            ProfileInfoLoader();
+
             return View();
+        }
+
+        private void ProfileInfoLoader()
+        {
+            Guid userid = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            User user = _databaseContext.Users.SingleOrDefault(x => x.Id == userid);
+
+            ViewData["NameSurname"] = user.NameSurname;
+        }
+
+        [HttpPost]
+        public IActionResult ProfileChangeFullName([Required][StringLength(50)] string ? fullname)
+
+        {
+            if (ModelState.IsValid)
+            {
+                Guid userid = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                User user = _databaseContext.Users.SingleOrDefault(x => x.Id == userid);
+               
+
+                user.NameSurname = fullname; 
+
+                _databaseContext.SaveChanges();
+
+                RedirectToAction(nameof(Profile));
+            }
+            ProfileInfoLoader();
+            return View("Profile");
+        }
+        [HttpPost]
+        public IActionResult ProfileChangePassword([Required][MinLength(6)][MaxLength(16)] string? password)
+
+        {
+            if (ModelState.IsValid)
+            {
+                Guid userid = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                User user = _databaseContext.Users.SingleOrDefault(x => x.Id == userid);
+                string hashedPassword = DoMd5HashedString(password);
+
+                user.Password = hashedPassword;
+
+                _databaseContext.SaveChanges();
+
+                ViewData["Result"] = "PasswordChanged";
+            }
+            ProfileInfoLoader();
+            return View("Profile");
         }
         public IActionResult Logout()
         {
