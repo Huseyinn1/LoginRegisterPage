@@ -171,6 +171,7 @@ namespace LoginRegisterPage.Controllers
             ProfileInfoLoader();
             return View("Profile");
         }
+
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
