@@ -131,6 +131,7 @@ namespace LoginRegisterPage.Controllers
             User user = _databaseContext.Users.SingleOrDefault(x => x.Id == userid);
 
             ViewData["NameSurname"] = user.NameSurname;
+            ViewData["ProfilImage"] = user.ProfilImageFileName;
         }
 
         [HttpPost]
@@ -171,7 +172,29 @@ namespace LoginRegisterPage.Controllers
             ProfileInfoLoader();
             return View("Profile");
         }
+        [HttpPost]
+        public IActionResult ProfileChangeFullImage([Required] IFormFile file)
 
+        {
+            if (ModelState.IsValid)
+            {
+                Guid userid = new Guid(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                User user = _databaseContext.Users.SingleOrDefault(x => x.Id == userid);
+
+                string filename = $"p_{userid}.jpg";
+                Stream stream = new FileStream($"wwwroot/uploads/{filename}", FileMode.OpenOrCreate);
+
+                file.CopyTo(stream);
+                stream.Close();
+                stream.Dispose();
+
+                user.ProfilImageFileName = filename;
+                _databaseContext.SaveChanges();
+                return RedirectToAction(nameof(Profile));
+            }
+            ProfileInfoLoader();
+            return View("Profile");
+        }
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
