@@ -1,0 +1,58 @@
+﻿@model List<UserModel>
+@{
+    ViewData["Title"] = "Users";
+}
+
+
+<div class="row">
+    <div class="col">
+     <h1 class="display-4">@ViewData["Title"]</h1>
+     <hr />
+  
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table class= "table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th>Fullname</th>
+                    <th>Username</th>
+                    <th>Locked</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(UserModel user in Model)
+                {
+                   <tr>
+                        <td>@user.NameSurname</td>
+                        <td>@user.UserName</td>
+                        <td>@if (user.Locked)
+                            {
+                                <i class="fa fa-check text-succes"></i>
+                            }
+                            else
+                            {
+                                <i class="fa fa-check text-danger"></i>
+                                
+                            }
+                        </td>
+                        <td>@user.Role</td>
+                        <td>@user.CreatedAt</td>
+                        <td>@user.CreatedAt</td>
+                        <td class="text-end">
+                            <button type="button" class="btn btn-info btn-sm"><i class="fa fa-edit me-2"> Edit</i></button>
+                            <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash me-2"> Remove</i></button>
+                        </td>
+
+                    </tr> 
+                   
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>

@@ -26,25 +26,33 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                       
+
                         @if (User.Identity.IsAuthenticated)
                         {
                             if (User.IsInRole("admin"))
                             {
-                                  <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Administrator</a>
-                        </li>
+                               
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" asp-action="Index" asp-controller="Admin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Administator
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a asp-action="Index" asp-controller="User" class="dropdown-item">Users</a></li>
+
+                                    </ul>
+                                </li>
                             }
                             <li class="nav-item ms-auto">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profile">
                                     <i class="fa-solid fa-user"></i>@User.FindFirst("")
-                           </a>
+                                </a>
                             </li>
                             <li class="nav-item ">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">
                                     <i class="fa-solid fa-right-from-bracket me-2 "></i>
-                                    Logout</a>
-                                   
+                                    Logout
+                                </a>
+
                             </li>
                         }
 
@@ -52,11 +60,13 @@
                         {
                             <li class="nav-item ms-auto">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">
-                                    <i class="fa-solid fa-right-to-bracket me-2 "></i>Login</a>
+                                    <i class="fa-solid fa-right-to-bracket me-2 "></i>Login
+                                </a>
                             </li>
                             <li class="nav-item ">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">
-                                     <i class="fa-solid fa-user "></i> Register</a>
+                                    <i class="fa-solid fa-user "></i> Register
+                                </a>
                             </li>
                         }
 
