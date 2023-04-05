@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using LoginRegisterPage.Entities;
 using LoginRegisterPage.Models;
+using static LoginRegisterPage.Models.UserModel;
 
 namespace LoginRegisterPage
 {
@@ -9,6 +10,7 @@ namespace LoginRegisterPage
         public AutoMapperConfig()
         {
             CreateMap<User, UserModel>().ReverseMap();
+            CreateMap<User, CreateUserModel>().ReverseMap();
         }
     }
 }
