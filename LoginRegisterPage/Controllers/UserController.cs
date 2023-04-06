@@ -2,7 +2,7 @@
 using LoginRegisterPage.Entities;
 using LoginRegisterPage.Models;
 using Microsoft.AspNetCore.Mvc;
-using static LoginRegisterPage.Models.UserModel;
+
 
 namespace LoginRegisterPage.Controllers
 {
@@ -21,24 +21,56 @@ namespace LoginRegisterPage.Controllers
 
         public IActionResult Index()
         {
-           List<UserModel> users = _dataBaseContext.Users.ToList().Select(x => _mapper.Map<UserModel>(x)).ToList();
+            List<UserModel> users = _dataBaseContext.Users.ToList().Select(x => _mapper.Map<UserModel>(x)).ToList();
 
             return View(users);
         }
         public IActionResult Create()
         {
-            return View();  
+            return View();
         }
         [HttpPost]
         public IActionResult Create(CreateUserModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
+                if (_dataBaseContext.Users.Any(x => x.UserName.ToLower() == model.UserName.ToLower()))
+                {
+                    ModelState.AddModelError(nameof(model.UserName), "Username already exists.");
+                    return View(model);
+                }
                 User user = _mapper.Map<User>(model);
                 _dataBaseContext.Users.Add(user);
                 _dataBaseContext.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
+            return View();
+        }
+        public IActionResult Edit(Guid id)
+
+        {
+            User user = _dataBaseContext.Users.Find(id);
+            EditUserModel model = _mapper.Map<EditUserModel>(user);
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult Edit(Guid id, EditUserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (_dataBaseContext.Users.Any(x => x.UserName.ToLower() == model.UserName.ToLower() && x.Id != id))
+                {
+                    ModelState.AddModelError(nameof(model.UserName), "Username already exists.");
+                    return View(model);
+                }
+                User user = _dataBaseContext.Users.Find(id);
+                _mapper.Map(model, user);
+                _dataBaseContext.SaveChanges();
+                return RedirectToAction(nameof(Index));                
+            }
+
+                
+           
             return View();
         }
 

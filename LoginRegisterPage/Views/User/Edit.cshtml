@@ -1,7 +1,7 @@
 ﻿
-@model CreateUserModel
+@model EditUserModel
 @{
-    ViewData["Title"] = "Create User";
+    ViewData["Title"] = "Edit User";
 }
 
 
@@ -27,18 +27,8 @@
                 <span asp-validation-for="UserName" class="text-danger small"></span>
             </div>
 
-            <div class="form-group mb-3">
-
-                <label asp-for="Password" class="form-label">Password</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
-                <span asp-validation-for="Password" class="text-danger small"></span>
-            </div>
-            <div class="form-group mb-3">
-
-                <label asp-for="RePassword" class="form-label">RePassword</label>
-                <input asp-for="RePassword" type="password" class="form-select" placeholder="Password" />
-                <span asp-validation-for="RePassword" class="text-danger small"></span>
-            </div>
+            
+            
                <div class="form-group mb-3">
 
                 <label asp-for="Role" class="form-label">Rol</label>
