@@ -66,11 +66,30 @@ namespace LoginRegisterPage.Controllers
                 User user = _dataBaseContext.Users.Find(id);
                 _mapper.Map(model, user);
                 _dataBaseContext.SaveChanges();
-                return RedirectToAction(nameof(Index));                
+                return RedirectToAction(nameof(Index));
             }
 
-                
-           
+
+
+            return View();
+        }
+        
+        public IActionResult Delete(Guid id)
+        {
+
+            User user = _dataBaseContext.Users.Find(id);
+            if (user != null)
+            { 
+                _dataBaseContext.Users.Remove(user);
+
+
+                _dataBaseContext.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
+
+
+
+
             return View();
         }
 
